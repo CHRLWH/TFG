@@ -8,6 +8,9 @@ import Animated , {withSpring } from 'react-native-reanimated';
 import { useSharedValue } from 'react-native-reanimated';
 import { Marquee } from '@animatereactnative/marquee';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { Dimensions } from 'react-native';
+
+const { height } = Dimensions.get('window');
 
 
 import { TextInput } from 'react-native-web';
@@ -25,38 +28,38 @@ const PaginaPrincipal = () => {
   };
 
   return (
-    <ImageBackground /*source={image}*/ resizeMode="cover" style={styles.image}>
-    <SafeAreaProvider style={{width: '100%',height: '100%'}}>
-      
-      <SafeAreaView style={{height: 500, flexDirection: 'Column'}}>
+    <SafeAreaProvider style={{width: '100%',height: '100%', zIndex:1, flex: 1}}>
+    <View style={styles.curvedTop} />
+      <SafeAreaView style={{height: '20%', flexDirection: 'Column'}}>
         <View style={styles.foto}>
         <Text style={{flexDirection:"row", justifyContent:"flex-start", fontSize:30,lineHeight: 84,
     fontWeight: 'bold', color:'white'}}>Bienveni@!</Text>
         </View>
         <Text></Text>
         <View style={styles.texto}>
-        <View style= {{flexDirection: 'row', flexBasis:'auto', justifyContent: "space-between"}}>
-          <View style= {{flex: 0, flexDirection: 'row', alignItems:'center',flexBasis:'auto', justifyContent:'center'}}>
-            /** Hacer esto un boton que lleve a CoinPage.jsx
-             */
-              <Icon style= {{position: 'static', }} name="star" size={40} color="rgb(255, 254, 249)"/>
-              <Text style={{fontWeight: 'bold'}}> x 30</Text>
-            </View>
-            <View style= {{flex: 0, flexDirection: 'row', alignItems:'center',flexBasis:'auto', justifyContent:'center', marginRight: 30}}>
-              /** Hacer esto un boton que lleve a UserPage.jsx */
-              <Icon name="person-circle" size={40} color="rgb(175, 2, 2)"/>
-            </View>
-          </View>
-        <Text style={{fontSize: 30, fontWeight:'bold', marginTop: "45%", textShadowColor: 'rgb(108, 108, 108)'}}>Fotos populares!</Text>
-        <Marquee style={{marginTop:"9%"}}spacing={20} speed={1}>
-          <Image source={imageScroll} style={{borderBottomLeftRadius: 20,borderTopRightRadius: 20, boxShadow: '10px 10px rgb(249, 248, 141)',maxWidth: 150, maxHeight: 150}}></Image>
-        </Marquee>
-          <Text style={{}}> </Text>
-            <Animated.View style={[styles.box, { transform: [{ translateX }] }]} />
-            <Button onPress = {handlePress} title="Click me" />
-            <Text style={{fontSize: 30, fontWeight:'bold'}}>Hola</Text>
-        <Marquee spacing={20} speed={1}>
+        <View
+  style={{
+    position: 'absolute',
+    top: -100, // o el valor exacto donde lo quieres
+    left: -20,
+    right: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+  }}
+>
+  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+    <Icon name="star" size={40} color="rgb(255, 254, 249)" />
+    <Text style={{ fontWeight: 'bold', color: '#fff' }}> x 30</Text>
+  </View>
+  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+    <Icon name="person-circle" size={40} color="rgb(175, 2, 2)" />
+  </View>
+</View>
           
+        <Text style={{fontSize: 30, fontWeight:'bold', marginTop: '30%',zIndex:2, textShadowColor: 'rgb(19, 18, 18)'}}>Fotos populares!</Text>
+        <Marquee style={{marginTop:"10%",zIndex:1}}spacing={20} speed={1}>
+          <Image source={imageScroll} style={{borderBottomLeftRadius: 20,borderTopRightRadius: 20, boxShadow: '10px 10px rgb(249, 248, 141)',maxWidth: 150, maxHeight: 150}}></Image>
         </Marquee>
         </View>
       </SafeAreaView>
@@ -65,63 +68,99 @@ const PaginaPrincipal = () => {
       </View>
       
     </SafeAreaProvider>
-    </ImageBackground>
-
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
+    width: '100%',
+    height: '100%',
+    zIndex: 1,
     flex: 1,
-    justifyContent: 'space-between',
   },
-  NavBar: {
-    marginTop: "100%",
-    marginBottom: 0,
+  curvedTop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '20%',
+    backgroundColor: '#e75b52',
+    borderBottomLeftRadius: 100,
+    borderBottomRightRadius: 100,
+    overflow: 'hidden',
+    zIndex: -1,
   },
-  box: {
-    marginTop:'0%',
-    height: 120,
-    width: 120,
-    backgroundColor: '#b58df1',
-    borderRadius: 20,
-    marginVertical: 50,
+  headerArea: {
+    height: '20%',
+    flexDirection: 'column',
   },
-  footer: {
-    width: "100%",
-    position:"absolute",
-    bottom:0
-  },
-
   foto: {
     marginTop: 40,
-    marginLeft: 3,
-    marginRight:3,
-    flex: 0,
-    flexDirection: "row",
-    justifyContent: "center",
+    marginHorizontal: 3,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  welcomeText: {
+    fontSize: 30,
+    lineHeight: 84,
+    fontWeight: 'bold',
+    color: 'white',
   },
   texto: {
-    marginTop:'30%',
     marginLeft: '10%',
-    flexDirection: "column",
-    justifyContent: "center",
-    
-  },
-
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cajasDeTexto: {
-    marginTop: 3,
-    width: 2,
-  },
-  image: {
-    flex: 1,
+    flexDirection: 'column',
     justifyContent: 'center',
-    width: "100em",
+  },
+  iconRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  iconWithText: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconText: {
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  userIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: '20%',
+  },
+  sectionTitle: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    textShadowColor: 'rgb(19, 18, 18)',
+  },
+  marquee: {
+    marginTop: '9%',
+  },
+  scrollImage: {
+    borderBottomLeftRadius: 20,
+    borderTopRightRadius: 20,
+    width: 150,
+    height: 150,
+  },
+  footer: {
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+  },
+  curvedTop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '23%',
+    backgroundColor: '#D32F2F',
+    borderBottomLeftRadius: '30%',
+    borderBottomRightRadius: '30%',
+    overflow: 'hidden',
+    zIndex: -1, // Empuja al fondo
+    boxShadow: '0px 10px rgb(243, 175, 175)',
   },
 });
 
