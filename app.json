@@ -14,13 +14,18 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Esta app necesita acceso a tu galería para seleccionar imágenes o videos.",
+        "NSCameraUsageDescription": "Esta app necesita acceso a la cámara para tomar fotos.",
+        "NSPhotoLibraryAddUsageDescription": "Esta app necesita guardar imágenes en tu galería."
+      }
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+      "permissions": [
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO",
+        "READ_MEDIA_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

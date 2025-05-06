@@ -56,7 +56,6 @@ const PaginaPrincipal = () => {
     <Icon name="person-circle" size={40} color="rgb(175, 2, 2)" />
   </View>
 </View>
-          
         <Text style={{fontSize: 30, fontWeight:'bold', marginTop: '30%',zIndex:2, textShadowColor: 'rgb(19, 18, 18)'}}>Fotos populares!</Text>
         <Marquee style={{marginTop:"10%",zIndex:1}}spacing={20} speed={1}>
           <Image source={imageScroll} style={{borderBottomLeftRadius: 20,borderTopRightRadius: 20, boxShadow: '10px 10px rgb(249, 248, 141)',maxWidth: 150, maxHeight: 150}}></Image>
