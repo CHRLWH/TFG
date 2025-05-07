@@ -61,6 +61,7 @@ const PaginaPrincipal = () => {
           <Image source={imageScroll} style={{borderBottomLeftRadius: 20,borderTopRightRadius: 20, boxShadow: '10px 10px rgb(249, 248, 141)',maxWidth: 150, maxHeight: 150}}></Image>
         </Marquee>
         {/** ZONA DONDE ESTÉN LOS DATOS DEL USUARIO COMO UNA ESPECIE DE ESTADISTICAS DE LAS FOTOS QUE LLEVA HECHAS Y DEMÁS */}
+        
         </View>
           
         

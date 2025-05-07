@@ -4,6 +4,7 @@ import { SearchBar } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import Navbar from '../navbar/Navbar';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const GaleriaPrueba = () => {
   const [images, setImages] = useState([]); // Estado para almacenar las imágenes
@@ -55,7 +56,7 @@ const GaleriaPrueba = () => {
 
       <View style={{ paddingLeft: 40, flexDirection: 'column', justifyContent: 'center' }}>
         <SearchBar
-          placeholder="Search..."
+          placeholder="Buscar por nombre"
           onChangeText={setSearch}
           value={search}
           lightTheme
@@ -65,19 +66,22 @@ const GaleriaPrueba = () => {
             marginTop: '5%',
             backgroundColor: '#f1eae4',
             borderTopWidth: 0,
-            borderBottomWidth: 0,
+            borderBottomWidth:0,
             borderRadius: 8,
             padding: 0,
           }}
           inputContainerStyle={{
             backgroundColor: 'white',
-            borderRadius: 8,
+            borderRadius: 20,
             height: 40,
-            borderWidth: 2,
-            borderColor: '#3a4251',
+            borderBottomWidth: 4,
+            borderTopWidth: 4,
+            borderRightWidth: 4,
+            borderLeftWidth: 4,
+            borderColor: 'red',
           }}
           inputStyle={{
-            fontSize: 16,
+            fontSize: 18,
             color: '#3a4251',
           }}
           placeholderTextColor="#aaa"
@@ -86,10 +90,9 @@ const GaleriaPrueba = () => {
           style={{
             height: 4,
             backgroundColor: 'red',
-            marginVertical: 10,
-            width: 250,
+            marginVertical: 7,
+            width: "89%",
             marginTop: 20,
-            marginLeft: 20,
           }}
         />
       </View>
@@ -138,7 +141,7 @@ const styles = StyleSheet.create({
   titulo:{
     fontSize:30,
     flexDirection:'row',
-    marginTop:'25%',
+    marginTop:'10%',
     marginLeft:'10%',
     fontWeight:'bold',
     color:"red"

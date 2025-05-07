@@ -12,9 +12,23 @@ import { Dimensions } from 'react-native';
 const ViewImage = ({ route, navigation }) => {
   const { image } = route.params;
 
-  const handleDelete = () => {
-    // Llamar al back para hacer un delete
-    navigation.goBack();
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`http://192.168.1.55:3000/delete/${image.id}/`, {
+        method: 'DELETE',
+      });
+  
+      if (response.ok) {
+        console.log('Imagen eliminada exitosamente');
+        navigation.goBack(); // Regresar a la pantalla anterior
+      } else {
+        console.log('Error al eliminar la imagen');
+        navigation.goBack(); // Regresar a la pantalla anterior
+
+      }
+    } catch (error) {
+      console.error('Error en la solicitud:', error);
+    }
   };
   const testImage = `http://192.168.1.55:3000/imgs/${image.image}`;
   return (
