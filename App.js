@@ -7,6 +7,7 @@ import GalleryPage from './components/gallery/GalleryPage';
 import ClassImage from './components/classes/ClassImage';
 import Camera from './components/navbar/navbarCam/CameraComponent';
 import GaleriaPrueba from './components/gallery/GaleriaPrueba';  
+import ViewImage from './components/gallery/ViewImage/ViewImage';  
 
 import 'react-native-gesture-handler';
 
@@ -25,6 +26,7 @@ const App = () => {
         <Stack.Screen name="Home2" component={Index} />
         <Stack.Screen name="Camera" component={Camera} />
         <Stack.Screen name="GaleriaPrueba" component={GaleriaPrueba} />
+        <Stack.Screen name="ViewImage" component={ViewImage} />
 
       </Stack.Navigator>
     </NavigationContainer>

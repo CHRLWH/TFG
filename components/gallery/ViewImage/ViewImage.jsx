@@ -1,27 +1,72 @@
-import React from 'react';
-import { SafeAreaView, Image, StyleSheet, View, Pressable, Text } from 'react-native';
-import Logo from '../logoComponent/Logo';
-import ButtonBasics from '../buttons/ButtonBasics';
-import TextInputExample from '../utilities/TextInputExample';
-import Header from '../header/Header';
-import Footer from '../footer/Footer';
-import FotoPerfilUsuario from '../userPhoto/FotoPerfilUsuario';
-import Galeria from '../gallery/Galeria';
-import Navbar from '../navbar/Navbar';
-import { TextInput } from 'react-native-web';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+// ImageDetails.js
+import React, {useState}from 'react';
+import { ImageBackground,  ScrollView,  TouchableOpacity ,SafeAreaView, Image, StyleSheet, View, Pressable, Text, Button, FlatList } from 'react-native';
+import Navbar from '../../navbar/Navbar';
+import 'react-native-gesture-handler';
+import Animated , {withSpring } from 'react-native-reanimated';
+import { useSharedValue } from 'react-native-reanimated';
+import { Marquee } from '@animatereactnative/marquee';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { Dimensions } from 'react-native';
 
-const ViewImage = () => {
+const ViewImage = ({ route, navigation }) => {
+  const { image } = route.params;
+
+  const handleDelete = () => {
+    // Llamar al back para hacer un delete
+    navigation.goBack();
+  };
+
   return (
-    <SafeAreaProvider style={{width: '100%',height: '100%'}}>
-     /** Pantalla con crud de imagen con el nombre, valor y fecha + hora que se hizo ver transiciones con reanimated*/
-    </SafeAreaProvider>
     
+    <View style={{ flex: 1, padding: 20 }}>
+      <Image
+        source={image.src}
+        style={{ width: '100%', height: 300, marginBottom: 20, boxShadow: '20px 10px rgb(209, 104, 104)', borderBottomLeftRadius:50,borderBottomRightRadius:50,borderTopLeftRadius:50,borderTopRightRadius:50,marginTop:"20%"}}
+      />
+      <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', marginTop:20}}>
+        <Text style={{fontSize:30, fontWeight:'bold'}}>{image.name}</Text>
+        {/* Aquí mas detalles de la imagen llamando al back */}
+        <Text style={{fontSize:25}}>{image.descripcion}</Text>
+        <Text style={{fontSize:20}}>{image.fechaHora}</Text>
+        <Text style={{fontSize:20, fontWeight:'bold'}}>{image.valor}</Text>
+
+        <Pressable style={styles.boton} onPress={handleDelete}>
+          <Text style={styles.botonTexto}>Borrar Imagen</Text>
+        </Pressable>
+      </View>
+      <View style={styles.footer}>
+          <Navbar/>
+        </View>
+    </View>
   );
 };
-
 const styles = StyleSheet.create({
-  
+  footer: {
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    zIndex: -1,
+    marginLeft:20,
+
+  },
+  boton: {
+    backgroundColor: "#D32F2F", // amarillo similar
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 20,
+    boxShadow: '0px 10px rgb(243, 175, 175)',
+    borderBottomColor:'black',
+    width:200
+  },
+  botonTexto: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
 });
+
 
 export default ViewImage;

@@ -1,6 +1,5 @@
 import React, {useState}from 'react';
 import { ImageBackground,  ScrollView,  TouchableOpacity ,SafeAreaView, Image, StyleSheet, View, Pressable, Text, Button, FlatList } from 'react-native';
-import Logo from '../logoComponent/Logo';
 import Navbar from '../navbar/Navbar';
 import 'react-native-gesture-handler';
 import ClassImage from '../classes/ClassImage';
@@ -30,7 +29,7 @@ const PaginaPrincipal = () => {
   return (
     <SafeAreaProvider style={{width: '100%',height: '100%', zIndex:1, flex: 1}}>
     <View style={styles.curvedTop} />
-      <SafeAreaView style={{height: '20%', flexDirection: 'Column'}}>
+      <SafeAreaView style={{flexDirection: 'Column'}}>
         <View style={styles.foto}>
         <Text style={{flexDirection:"row", justifyContent:"flex-start", fontSize:30,lineHeight: 84,
     fontWeight: 'bold', color:'white'}}>Bienveni@!</Text>
@@ -56,11 +55,16 @@ const PaginaPrincipal = () => {
     <Icon name="person-circle" size={40} color="rgb(175, 2, 2)" />
   </View>
 </View>
-        <Text style={{fontSize: 30, fontWeight:'bold', marginTop: '30%',zIndex:2, textShadowColor: 'rgb(19, 18, 18)'}}>Fotos populares!</Text>
-        <Marquee style={{marginTop:"10%",zIndex:1}}spacing={20} speed={1}>
+
+        <Text style={{fontSize: 30, fontWeight:'bold', marginTop: '30%', textShadowColor: 'rgb(19, 18, 18)'}}>Tus fotos</Text>
+        <Marquee style={{marginTop:"10%",zIndex:0}}spacing={20} speed={1}>
           <Image source={imageScroll} style={{borderBottomLeftRadius: 20,borderTopRightRadius: 20, boxShadow: '10px 10px rgb(249, 248, 141)',maxWidth: 150, maxHeight: 150}}></Image>
         </Marquee>
+        {/** ZONA DONDE ESTÉN LOS DATOS DEL USUARIO COMO UNA ESPECIE DE ESTADISTICAS DE LAS FOTOS QUE LLEVA HECHAS Y DEMÁS */}
         </View>
+          
+        
+      
       </SafeAreaView>
       <View style={styles.footer}>
       <Navbar/>
