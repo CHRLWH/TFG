@@ -1,124 +1,156 @@
-import React, {useState, useEffect} from 'react';
-import { SafeAreaView, Image, StyleSheet, View, Pressable, Text, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ScrollView, SafeAreaView, Image, Text, StyleSheet, View, FlatList, Pressable, Dimensions } from 'react-native';
+import { SearchBar } from 'react-native-elements';
+import { useNavigation } from '@react-navigation/native';
+import Animated, { FadeIn } from 'react-native-reanimated';
+import Navbar from '../navbar/Navbar';
 
-const imagenEjemplo = require('../../assets/arbolEjemplo.jpg');
+const GaleriaPrueba = () => {
+  const [images, setImages] = useState([]); // Estado para almacenar las imágenes
+  const [search, setSearch] = useState('');
+  const navigation = useNavigation();
 
-const Galeria = () => {
-  console.log("Galeria montado"); // Este mensaje se imprimirá cada vez que el componente se monte
-  const [data, setData] = useState([])
+  const { width } = Dimensions.get('window');
+  const imageSize = (width - 60) / 2;
 
+  // Petición fetch para obtener las imágenes e información
   useEffect(() => {
-    fetch('http://192.168.1.62:3000/get', {
-      method:'GET'
-  })
-  .then(resp => resp.json())
-  .then(image => {
-    console.log("Datos recibidos:", image);
-    setData(image)
-  })
+    fetch('http://192.168.1.55:3000/get', {
+      method: 'GET',
+    })
+      .then((resp) => resp.json())
+      .then((imageData) => {
+        console.log('Datos recibidos:', imageData);
+        // Almacenar los datos en el estado images
+        setImages(imageData);
+      })
+      .catch((error) => console.error('Error al obtener datos:', error));
+  }, []);
 
-  }, [])
-   
-const renderData = (item) => {
-  const testImage = `http://192.168.1.62:3000/imgs/${item.image}`
-  console.log('Imagen URL:', testImage)
+  // Filtrar los datos según el texto de búsqueda
+  const filteredImages = images.filter(item => 
+    item.image && item.image.toLowerCase().includes(search.toLowerCase()) // Asegurarse de que item.name esté definido
+  );
+
+  const renderImage = (item, index) => {
+    const testImage = `http://192.168.1.55:3000/imgs/${item.image}`;
+    return (
+      <Pressable
+        key={item.id}
+        onPress={() => navigation.navigate('ViewImage', { image: item })} // Navegar a la pantalla de ViewImage con la imagen
+      >
+        <Animated.Image
+          entering={FadeIn.delay(100 * index).duration(800)}
+          source={{ uri: testImage }}
+          style={[styles.image, { width: imageSize, height: imageSize }]}
+          resizeMode="cover"
+        />
+      </Pressable>
+    );
+  };
+
   return (
-    <View styles>
-      <Image
-    source={{ uri: testImage}}
-    style={styles.imagen}
-  />        
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.titulo}>GALERIA</Text>
 
-  <Text>{item.image}</Text>
-    </View>
-  )
-}
-return (
+      <View style={{ paddingLeft: 40, flexDirection: 'column', justifyContent: 'center' }}>
+        <SearchBar
+          placeholder="Search..."
+          onChangeText={setSearch}
+          value={search}
+          lightTheme
+          round
+          containerStyle={{
+            width: 300,
+            marginTop: '5%',
+            backgroundColor: '#f1eae4',
+            borderTopWidth: 0,
+            borderBottomWidth: 0,
+            borderRadius: 8,
+            padding: 0,
+          }}
+          inputContainerStyle={{
+            backgroundColor: 'white',
+            borderRadius: 8,
+            height: 40,
+            borderWidth: 2,
+            borderColor: '#3a4251',
+          }}
+          inputStyle={{
+            fontSize: 16,
+            color: '#3a4251',
+          }}
+          placeholderTextColor="#aaa"
+        />
+        <View
+          style={{
+            height: 4,
+            backgroundColor: 'red',
+            marginVertical: 10,
+            width: 250,
+            marginTop: 20,
+            marginLeft: 20,
+          }}
+        />
+      </View>
 
-  <SafeAreaView style={styles.container}>
-    <View>
-      <FlatList
-        data = {data}
-        renderItem = {({item}) => {
-          return renderData(item)
-        }}
-        keyExtractor = {item => `${item.id}`}
-      /></View>
-  </SafeAreaView>
+      <ScrollView contentContainerStyle={styles.gallery}>
+        <Text style={styles.segundoTitulo}>Lugares</Text>
+        <View style={styles.row}>
+          {filteredImages.map((item, index) => renderImage(item, index))}
+        </View>
+      </ScrollView>
+      <View style={styles.footer}>
+        <Navbar />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  homeContainer: {
+  container: {
     flex: 1,
-    marginHorizontal: 25,
+    justifyContent: 'space-between',
+    ImageBackground:"blue"
   },
-  detailContainer: {
-    flex: 1,
+  searchBar: {
+    marginTop:'10%',
   },
-  wrapper: {
-    flex: 1,
-    marginHorizontal: 25,
+  gallery: {
+    paddingHorizontal: 25,
+    paddingTop: 50,
+    paddingBottom: 100, // para dejar espacio al navbar fijo
   },
   row: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
-  header: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    marginTop: 25,
-    marginBottom: 12,
+  image: {
+    borderRadius: 15,
+    marginBottom: 10,
   },
-  text: {
-    fontSize: 16,
-    marginTop: 8,
-  },
-  font28: {
-    fontSize: 28,
-  },
-  chip: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 8,
-    width: 90,
-    borderRadius: 5,
-    textAlign: 'center',
-    marginRight: 8,
-  },
-  detailsImage: {
+  footer: {
     width: '100%',
-    height: 400,
+    position: 'absolute',
+    bottom: 0,
   },
-  callToActionWrapper: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 30,
+  titulo:{
+    fontSize:30,
+    flexDirection:'row',
+    marginTop:'25%',
+    marginLeft:'10%',
+    fontWeight:'bold',
+    color:"red"
   },
-  callToAction: {
-    backgroundColor: '#add8e6',
-    padding: 16,
-    width: 250,
-    borderRadius: 5,
-  },
-  callToActionText: {
-    color: '#015571',
-    textAlign: 'center',
-    textTransform: 'uppercase',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  imagen: {
-    width: '100%',
-    height: 400, // Ajustando según la imagen grande en la primera página
-    borderRadius: 15, // Para mantener el diseño uniforme
-  },
-  header: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    marginTop: 25,
-    marginBottom: 12,
+  segundoTitulo:{
+    fontSize:30,
+    flexDirection:'row',
+    marginLeft:'10%',
+    marginBottom:'5%',
+    fontWeight:'bold'
   },
 });
 
-export default Galeria;
+
+export default GaleriaPrueba;

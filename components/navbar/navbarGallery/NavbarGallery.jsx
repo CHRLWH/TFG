@@ -8,7 +8,7 @@ const NavbarGallery= ({}) => {
 
   return (
     <SafeAreaView style={styles.contenedor}>
-    <TouchableOpacity onPress={() => navigation.navigate('GaleriaPrueba')}>
+    <TouchableOpacity onPress={() => navigation.navigate('Galeria')}>
     <Icon name="image" size={40} color="#FFF" />
     </TouchableOpacity>
     </SafeAreaView>
