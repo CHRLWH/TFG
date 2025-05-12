@@ -43,7 +43,7 @@ const ViewImage = ({ route, navigation }) => {
         {/* Aquí mas detalles de la imagen llamando al back */}
         <Text style={{fontSize:25}}>{image.descripcion}</Text>
         <Text style={{fontSize:20}}>{image.fechaHora}</Text>
-        <Text style={{fontSize:20, fontWeight:'bold'}}>{image.valor}</Text>
+        <Text style={{fontSize:20, fontWeight:'bold'}}>Puntos obtenidos: {image.valor}</Text>
 
         <Pressable style={styles.boton} onPress={handleDelete}>
           <Text style={styles.botonTexto}>Borrar Imagen</Text>
