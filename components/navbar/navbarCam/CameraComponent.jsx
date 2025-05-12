@@ -1,201 +1,111 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, Alert, ActivityIndicator, Text } from 'react-native';
-import { CameraView } from 'expo-camera';
-import * as MediaLibrary from 'expo-media-library';
-import * as FileSystem from 'expo-file-system';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from "react";
+import { View, Button, Image, Alert, Text } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
+import * as Sharing from "expo-sharing";
+import LoadingOverlay from "../../pantallaDeCarga/loadingScreen";  // Asegúrate de importar el componente LoadingOverlay
 
-export default function CameraComponent() {
-  const [facing, setFacing] = useState('back');
-  const [flash, setFlash] = useState('off');
-  const [uploading, setUploading] = useState(false);
-  const [isCameraReady, setIsCameraReady] = useState(false); // Nuevo estado
-  const cameraRef = useRef(null);
+const PhotoCapture = () => {
+  const [imageUri, setImageUri] = useState(null);
+  const [loading, setLoading] = useState(false); // Estado para controlar la pantalla de carga
 
-  const tempPhotoDir = `${FileSystem.cacheDirectory}photos/`;
-  const serverUrl = 'https:'; // Reemplaza con tu URL real
-
-  useEffect(() => {
-    (async () => {
-      const { status } = await MediaLibrary.requestPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permisos insuficientes', 'Se necesitan permisos para acceder a la galería');
-      }
-    })();
-  }, []);
-
-  const toggleCameraType = () => {
-    setFacing(current => (current === 'back' ? 'front' : 'back'));
-  };
-
-  const toggleFlash = () => {
-    setFlash(current => (current === 'off' ? 'on' : 'off'));
-  };
-
-  const uploadImageToServer = async (fileUri) => {
-    setUploading(true);
-
-    try {
-      const fileName = fileUri.split('/').pop();
-
-      const formData = new FormData();
-      formData.append('photo', {
-        uri: fileUri,
-        name: fileName,
-        type: 'image/jpeg',
-      });
-
-      formData.append('userId', 'user123');
-      formData.append('timestamp', new Date().toISOString());
-
-      const response = await fetch(serverUrl, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      if (response.ok) {
-        const responseData = await response.json();
-        console.log('Imagen subida exitosamente:', responseData);
-        Alert.alert("Éxito", "La imagen se ha subido correctamente al servidor");
-        return responseData.imageUrl;
-      } else {
-        throw new Error(`Error del servidor: ${response.status}`);
-      }
-    } catch (error) {
-      console.error('Error al subir la imagen:', error);
-      Alert.alert("Error", `No se pudo subir la imagen al servidor: ${error.message}`);
-      throw error;
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const takePicture = async () => {
-    if (!cameraRef.current || !isCameraReady) {
-      Alert.alert("Espera", "La cámara aún se está preparando...");
+  // 📷 Tomar foto
+  const takePhoto = async () => {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert("Permiso requerido", "Se necesita acceso a la cámara.");
       return;
     }
 
+    const result = await ImagePicker.launchCameraAsync({ base64: false });
+
+    if (!result.canceled) {
+      const localUri = result.assets[0].uri;
+      console.log("URI de la imagen capturada:", localUri);
+
+      setImageUri(localUri);
+      await saveImageLocally(localUri);
+    }
+  };
+
+  // 📥 Guardar imagen localmente
+  const saveImageLocally = async (uri) => {
     try {
-      const photo = await cameraRef.current.takePictureAsync({ quality: 0.8 });
+      const folderPath = FileSystem.documentDirectory + "TFG-main/components/imgs/";
+      await FileSystem.makeDirectoryAsync(folderPath, { intermediates: true });
+
       const fileName = `photo_${Date.now()}.jpg`;
+      const newPath = folderPath + fileName;
 
-      const dirInfo = await FileSystem.getInfoAsync(tempPhotoDir);
-      if (!dirInfo.exists) {
-        await FileSystem.makeDirectoryAsync(tempPhotoDir, { intermediates: true });
-      }
+      await FileSystem.copyAsync({ from: uri, to: newPath });
+      console.log("Imagen guardada en:", newPath);
 
-      const tempUri = `${tempPhotoDir}${fileName}`;
+      // Opcional: guardar en galería
+      // await MediaLibrary.saveToLibraryAsync(newPath);
 
-      await FileSystem.moveAsync({
-        from: photo.uri,
-        to: tempUri,
+      // Subir la imagen al servidor
+      await uploadImageToDB(newPath);
+    } catch (error) {
+      console.error("Error al guardar la imagen:", error);
+      Alert.alert("Error", "No se pudo guardar la imagen.");
+    }
+  };
+
+  // 📤 Subir imagen a servidor
+  const uploadImageToDB = async (uri) => {
+    try {
+      setLoading(true);  // Muestra la pantalla de carga
+
+      const formData = new FormData();
+      formData.append("photo", {
+        uri,
+        name: uri.split("/").pop(),
+        type: "image/jpeg",
       });
 
-      const serverImageUrl = await uploadImageToServer(tempUri);
+      const response = await fetch("http://192.168.1.62:3000/upload", {
+        method: "POST",
+        headers: { "Content-Type": "multipart/form-data" },
+        body: formData,
+      });
 
-      console.log("Foto guardada en el servidor:", serverImageUrl);
+      if (!response.ok) throw new Error(`Error del servidor: ${response.status}`);
+      const data = await response.json();
+      console.log("Imagen subida con éxito:", data);
 
-      await FileSystem.deleteAsync(tempUri);
-
-      return serverImageUrl;
+      setLoading(false);  // Oculta la pantalla de carga
+      Alert.alert("¡Éxito!", "Imagen subida correctamente.");
     } catch (error) {
-      console.error("Error al procesar la foto:", error);
-      Alert.alert("Error", `No se pudo procesar la foto: ${error.message}`);
+      console.error("Error al subir la imagen:", error);
+      setLoading(false);  // Oculta la pantalla de carga
+      Alert.alert("Error", "Hubo un problema al subir la imagen.");
+    }
+  };
+
+  // 📤 Compartir imagen
+  const shareImage = async () => {
+    if (imageUri && (await Sharing.isAvailableAsync())) {
+      await Sharing.shareAsync(imageUri);
+    } else {
+      Alert.alert("Error", "No se puede compartir la imagen.");
     }
   };
 
   return (
-    <View style={styles.container}>
-      <CameraView
-        style={styles.camera}
-        facing={facing}
-        flashMode={flash}
-        enableTorch={flash === 'on'}
-        ref={cameraRef}
-        onCameraReady={() => setIsCameraReady(true)} // <- aquí se marca lista
-      >
-        <View style={styles.controlBar}>
-          <TouchableOpacity style={styles.iconButton} onPress={toggleCameraType}>
-            <Ionicons name="camera-reverse" size={24} color="white" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.iconButton} onPress={toggleFlash}>
-            <Ionicons name={flash === 'on' ? "flash" : "flash-off"} size={24} color="white" />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.captureContainer}>
-          {uploading ? (
-            <View style={styles.uploadingContainer}>
-              <ActivityIndicator size="large" color="#fff" />
-              <Text style={styles.uploadingText}>Subiendo foto...</Text>
-            </View>
-          ) : (
-            <TouchableOpacity
-              style={styles.captureButton}
-              onPress={takePicture}
-              disabled={uploading || !isCameraReady} // <- botón desactivado si no está lista
-            >
-              <View style={styles.captureInner} />
-            </TouchableOpacity>
-          )}
-        </View>
-      </CameraView>
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Button title="Tomar Foto" onPress={takePhoto} />
+      {imageUri && (
+        <>
+          <Image source={{ uri: imageUri }} style={{ width: 200, height: 200 }} />
+          <Button title="Compartir Imagen" onPress={shareImage} />
+        </>
+      )}
+      
+      {/* Pantalla de carga */}
+      <LoadingOverlay visible={loading} message="Subiendo imagen..." />
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  camera: {
-    flex: 1,
-  },
-  controlBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 20,
-    paddingTop: 40,
-  },
-  iconButton: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  captureContainer: {
-    position: 'absolute',
-    bottom: 40,
-    alignSelf: 'center',
-  },
-  captureButton: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  captureInner: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#fff',
-  },
-  uploadingContainer: {
-    alignItems: 'center',
-  },
-  uploadingText: {
-    color: '#fff',
-    marginTop: 10,
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-});
+export default PhotoCapture;

@@ -8,7 +8,6 @@ const onPress = () => {
   };
 const NavbarHome = ({}) => {
   const navigation = useNavigation(); 
-  // Obtener la navegación en un componente hijo
   return (
     <SafeAreaView style={styles.contenedor}>
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>

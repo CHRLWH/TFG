@@ -18,45 +18,14 @@ import Animated, {
 const imagenEjemplo = require('../../assets/logoCimpa.png');
 
 const Navbar = ({ width }) => {
-  const pressed = useSharedValue(false);
-  let contadorTaps = useSharedValue(0);
-  
-  const tap = Gesture.Tap()
-    .onBegin(() => {
-      contadorTaps.value++;
-      pressed.value = contadorTaps.value % 2 !== 0; // Alterna entre true y false.
-    });
-  const animatedStyles = useAnimatedStyle(() => ({
-    transform: [{ scale: withTiming(pressed.value ? 1.5 : 1)}],
-  }));
-
-  const offset = useSharedValue(width / 2 - 160);
-
-  const animatedStyleNavBar = useAnimatedStyle(() => ({
-    transform: [{ translateX: offset.value }],
-  }));
-
-  React.useEffect(() => {
-    offset.value = withRepeat(
-      withTiming(-offset.value, { duration: 1750 }),
-      -1,
-      true
-    );
-  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <Animated.View style={[animatedStyleNavBar]}>
       <View style={styles.contenedorNavegacion}>
-        <GestureDetector gesture={tap}>
-          <Animated.View style={[animatedStyles]}>
             <NavbarHome/>
-          </Animated.View>
-        </GestureDetector>
           <NavbarCamera/>
         <NavbarGallery/>
       </View>
-      </Animated.View>
     </SafeAreaView>
   );
 };

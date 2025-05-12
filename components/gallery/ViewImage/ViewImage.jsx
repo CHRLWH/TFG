@@ -14,7 +14,7 @@ const ViewImage = ({ route, navigation }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://192.168.1.55:3000/delete/${image.id}/`, {
+      const response = await fetch(`http://192.168.1.62:3000/delete/${image.id}/`, {
         method: 'DELETE',
       });
   
@@ -30,7 +30,7 @@ const ViewImage = ({ route, navigation }) => {
       console.error('Error en la solicitud:', error);
     }
   };
-  const testImage = `http://192.168.1.55:3000/imgs/${image.image}`;
+  const testImage = `http://192.168.1.62:3000/imgs/${image.image}`;
   return (
     
     <View style={{ flex: 1, padding: 20 }}>
@@ -39,7 +39,7 @@ const ViewImage = ({ route, navigation }) => {
         style={{ width: '100%', height: 300, marginBottom: 20, boxShadow: '20px 10px rgb(209, 104, 104)', borderBottomLeftRadius:50,borderBottomRightRadius:50,borderTopLeftRadius:50,borderTopRightRadius:50,marginTop:"20%"}}
       />
       <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', marginTop:20}}>
-        <Text style={{fontSize:30, fontWeight:'bold'}}>{image.image}</Text>
+        <Text style={{fontSize:30, fontWeight:'bold'}}>{image.nombre}</Text>
         {/* Aquí mas detalles de la imagen llamando al back */}
         <Text style={{fontSize:25}}>{image.descripcion}</Text>
         <Text style={{fontSize:20}}>{image.fechaHora}</Text>

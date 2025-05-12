@@ -4,7 +4,6 @@ import { SearchBar } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import Navbar from '../navbar/Navbar';
-import Icon from 'react-native-vector-icons/Ionicons';
 
 const GaleriaPrueba = () => {
   const [images, setImages] = useState([]); // Estado para almacenar las imágenes
@@ -16,7 +15,7 @@ const GaleriaPrueba = () => {
 
   // Petición fetch para obtener las imágenes e información
   useEffect(() => {
-    fetch('http://192.168.1.55:3000/get', {
+    fetch('http://192.168.1.62:3000/get', {
       method: 'GET',
     })
       .then((resp) => resp.json())
@@ -34,7 +33,7 @@ const GaleriaPrueba = () => {
   );
 
   const renderImage = (item, index) => {
-    const testImage = `http://192.168.1.55:3000/imgs/${item.image}`;
+    const testImage = `http://192.168.1.62:3000/imgs/${item.image}`;
     return (
       <Pressable
         key={item.id}
@@ -54,51 +53,8 @@ const GaleriaPrueba = () => {
     <SafeAreaView style={styles.container}>
       <Text style={styles.titulo}>GALERIA</Text>
 
-      <View style={{ paddingLeft: 40, flexDirection: 'column', justifyContent: 'center' }}>
-        <SearchBar
-          placeholder="Buscar por nombre"
-          onChangeText={setSearch}
-          value={search}
-          lightTheme
-          round
-          containerStyle={{
-            width: 300,
-            marginTop: '5%',
-            backgroundColor: '#f1eae4',
-            borderTopWidth: 0,
-            borderBottomWidth:0,
-            borderRadius: 8,
-            padding: 0,
-          }}
-          inputContainerStyle={{
-            backgroundColor: 'white',
-            borderRadius: 20,
-            height: 40,
-            borderBottomWidth: 4,
-            borderTopWidth: 4,
-            borderRightWidth: 4,
-            borderLeftWidth: 4,
-            borderColor: 'red',
-          }}
-          inputStyle={{
-            fontSize: 18,
-            color: '#3a4251',
-          }}
-          placeholderTextColor="#aaa"
-        />
-        <View
-          style={{
-            height: 4,
-            backgroundColor: 'red',
-            marginVertical: 7,
-            width: "89%",
-            marginTop: 20,
-          }}
-        />
-      </View>
-
       <ScrollView contentContainerStyle={styles.gallery}>
-        <Text style={styles.segundoTitulo}>Lugares</Text>
+        <Text style={styles.segundoTitulo}>Fotos</Text>
         <View style={styles.row}>
           {filteredImages.map((item, index) => renderImage(item, index))}
         </View>
@@ -139,12 +95,13 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   titulo:{
-    fontSize:30,
+    fontSize:40,
     flexDirection:'row',
-    marginTop:'10%',
+    marginTop:'25%',
     marginLeft:'10%',
     fontWeight:'bold',
-    color:"red"
+    color:"red",
+    marginTop:'10%',
   },
   segundoTitulo:{
     fontSize:30,
